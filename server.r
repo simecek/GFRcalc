@@ -1,5 +1,7 @@
 require(shiny)
 
+source("helpers.R")
+
 shinyServer(function(input, output) {
   output$contents <- renderTable({
   

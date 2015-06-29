@@ -8,7 +8,8 @@ shinyUI(pageWithSidebar(
   # Sidebar with a slider input for number of observations
   sidebarPanel(
     fileInput("GFRfile", "Input file:"),
-    helpText("Input file should be comma separated having 'Animal'column with animal ids,
+    helpText("Input file should be a comma separated file
+              including 'Animal' column with animal ids,
               'Time' column with time points 
              and fluorescence columns 'M1', 'M2', 'M3'")
   ),
