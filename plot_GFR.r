@@ -63,7 +63,7 @@ animals <- unique(dt$Animal)
 results <- NULL
 
 pdf("plot_10examples_GFR.pdf",width=12)
-plot(0,1)
+
 for (a in animals) {
   tmp <- subset(dt,Animal==a)
   tmp <- tmp[order(tmp$Time),]
@@ -91,3 +91,5 @@ for (a in animals) {
   plot(plot_grid(p1, p2))
 }
 dev.off()
+
+write.csv(results,"10examples_GFR.csv", row.names=FALSE)
