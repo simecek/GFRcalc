@@ -1,13 +1,15 @@
 
 # check file format
 check.format <- function(tb, col.names=c("M1","M2","M3","Time"), min.rows=6) {
-  if (is.null(tb)) return(invisible(""))
-  if (!is.data.frame(tb)) return("Not a data frame.")
-  if (!all(col.names %in% names(tb))) return("M1, M2, M3 and Time columns are required.") 
-  for (c in col.names)
-    if (!is.numeric(tb[,c])) return(paste("Column",c,"must be numeric."))
-  if (any(is.na(tb$Time))) return("Time must not contain missing values.") 
-  if (any(duplicated(tb$Time))) return("Time must not contain duplicated values.")
+  if (is.null(tb)) return(invisible("")) # no file given
+  if (!is.data.frame(tb)) return("ERROR: Not a data frame.")
+  if (nrow(tb) %% 3 != 0) return("ERROR: Number of rows not divisible by 3.")
+  if (!is.character(tb[,1]))
+    return("ERROR: Animal column must be character.")
+  for (c in 2:5)
+    if (!is.numeric(tb[,c])) return(paste("ERROR: Column",c,"must be numeric."))
+  if (any(is.na(tb[,2]))) return("ERROR: Time must not contain missing values.")
+  if (any(tb[,2]<0 | tb[,2]>200)) return("ERROR: Time must be an integer between 0 and 200.")
   if (nrow(tb) < min.rows) return(paste("Ar least",min.rows,"rows required."))
   return(invisible(""))
 }
@@ -44,15 +46,37 @@ twoexp <- function(y,x) {
            error = function(e) NULL)
 }  
 
-# ggplot prediction
-plot.pred <- function(dt, pred) {
-  require(ggplot2)
-  tmp2 <- data.frame(Time = rep(dt$Time,4),
-                     Line = rep(c("M1","M2","M3","model"), each=nrow(dt)),
-                     Fluorescence = c(dt$M1, dt$M2, dt$M3,
-                                      pred))
+make.plot <- function(dt, i) {
+  animals <- unique(dt$Animal)
+  a <- animals[i]
   
-  qplot(y=Fluorescence, x=Time, data=tmp2) +
-    geom_line(aes(group=Line, color=Line)) +
-    theme_bw()
+  tmp <- subset(dt, Animal == a)
+  tmp <- tmp[order(tmp$Time),]
+  
+  tmp$mean <- rowMeans(tmp[,c("M1","M2","M3")], na.rm=TRUE)
+  start <- 2 # skip first observation
+  tmp2 <- tmp[start:nrow(tmp),]
+  
+  fit1 <- oneexp(y=tmp2$mean,x=tmp2$Time)
+  fit2 <- twoexp(y=tmp2$mean,x=tmp2$Time)
+  
+  if (!is.null(fit2)) {
+    dt.plot <- data.frame(Time = rep(tmp2$Time,4),
+                       Line = rep(c("F1","F2","F3","prediction"), each=nrow(tmp2)),
+                       Fluorescence = c(tmp2$M1, tmp2$M2, tmp2$M3,
+                                        predict(fit2)))
+  } else {
+    medianM = median(c(tmp2$M1, tmp2$M2, tmp2$M3))
+    dt.plot <- data.frame(Time = rep(tmp2$Time,4),
+                          Line = rep(c("F1","F2","F3","prediction"), each=nrow(tmp2)),
+                          Fluorescence = c(tmp2$M1, tmp2$M2, tmp2$M3,
+                                           rep(medianM, nrow(tmp2))))
+  }
+  
+  plot(qplot(y=Fluorescence, x=Time, data=dt.plot) +
+         geom_line(aes(group=Line, color=Line)) +
+         ggtitle(a) +  
+         theme_bw())
 }
+
+

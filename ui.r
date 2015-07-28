@@ -8,17 +8,17 @@ shinyUI(pageWithSidebar(
   # Sidebar with a slider input for number of observations
   sidebarPanel(
     fileInput("GFRfile", "Input file:"),
-    helpText("Input file should be a comma separated file
-              including 'Animal' column with animal ids,
-              'Time' column with time points 
-             and fluorescence columns 'M1', 'M2', 'M3'")
+    helpText("Input file should a XLSX file with 4-5 columns and no header:
+              'Animal' (optional), 'Time', 'F1',
+              'F2' and 'F3' (other columns will be ignored)")
   ),
   
   mainPanel(
-   # textOutput("check"),
+    textOutput("check"),
    #  plotOutput("oneComp", width="800px", height="800px"),
    # plotOutput("twoComp", width="800px", height="800px"),
-    tableOutput('contents')
+    tableOutput('contents'),
+    uiOutput("plots")
   )
  )
 )
