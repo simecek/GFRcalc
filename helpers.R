@@ -84,7 +84,6 @@ outlier.detect <- function(tmp, trhold) {
   fit <- lm(log2(tmp$mean)~tmp$Time)
   pred <- 2^predict(fit)
   output <- abs(log2(tmp[,c("M1","M2","M3")] / pred))>trhold/5
-  print(max(abs(log2(tmp[,c("M1","M2","M3")] / pred))))
   return(output)
 
 }

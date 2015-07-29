@@ -4,7 +4,7 @@ require(ggplot2)
 
 source("helpers.R")
 options(stringsAsFactors = FALSE)
-max_plots <- 10
+max_plots <- 16
 
 shinyServer(function(input, output) {
   
@@ -12,8 +12,9 @@ shinyServer(function(input, output) {
   file.upload <- reactive({
     inFile <- input$GFRfile
     if (!is.null(inFile)) {
-      file.rename(inFile$datapath, paste(inFile$datapath, "xlsx", sep=".")) # dirty hack, see issue 85
-      tmp <- read_excel(paste(inFile$datapath, "xlsx", sep="."), sheet=2, col_names = FALSE)
+      ext <- tools::file_ext(inFile$name)
+      file.rename(inFile$datapath, paste(inFile$datapath, ext, sep=".")) # dirty hack, see issue 85
+      tmp <- read_excel(paste(inFile$datapath, ext, sep="."), sheet=2, col_names = FALSE)
       tmp <- tmp[!is.na(tmp[,1]),] # remove NA rows
       if (!is.character(tmp[,1])) { # if animal IDs missing, add them
         animalID <- rep(LETTERS, each=length(unique(tmp[,1])))[1:nrow(tmp)]
@@ -42,7 +43,6 @@ shinyServer(function(input, output) {
 
       for (a in animals) {
   
-        print(a)
         tmp <- subset(dt, Animal==a)
         tmp <- tmp[order(tmp$Time),]
         
