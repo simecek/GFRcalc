@@ -8,9 +8,11 @@ shinyUI(pageWithSidebar(
   # Sidebar with a slider input for number of observations
   sidebarPanel(
     fileInput("GFRfile", "Input file:"),
+    sliderInput("trhold","Outlier threshold:", min=1, max=10, value=5),
     helpText("Input file should a XLSX file with 4-5 columns and no header:
               'Animal' (optional), 'Time', 'F1',
-              'F2' and 'F3' (other columns will be ignored)")
+              'F2' and 'F3' (other columns will be ignored).")
+    
   ),
   
   mainPanel(

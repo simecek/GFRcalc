@@ -42,8 +42,12 @@ shinyServer(function(input, output) {
 
       for (a in animals) {
   
+        print(a)
         tmp <- subset(dt, Animal==a)
         tmp <- tmp[order(tmp$Time),]
+        
+        # very rough outlier detection
+        tmp[-1,c("M1","M2","M3")][outlier.detect(tmp[-1,], input$trhold)] <- NA
         
         tmp$mean <- rowMeans(tmp[,c("M1","M2","M3")], na.rm=TRUE)
         start <- 2 # skip first observation
@@ -54,7 +58,8 @@ shinyServer(function(input, output) {
         
         newrow <- data.frame(Animal = a, 
                              GFR1 = tmp$mean[1]*ifelse(is.null(fit1), NA, coef(fit1)[2]/coef(fit1)[1]),
-                             GFR2 = tmp$mean[1]*ifelse(is.null(fit2), NA, coef(fit2)[2]*coef(fit2)[4]/(coef(fit2)[1]*coef(fit2)[4]+coef(fit2)[2]*coef(fit2)[3])))
+                             GFR2 = tmp$mean[1]*ifelse(is.null(fit2), NA, coef(fit2)[2]*coef(fit2)[4]/(coef(fit2)[1]*coef(fit2)[4]+coef(fit2)[2]*coef(fit2)[3])),
+                             nNA = sum(is.na(tmp2[,c("M1","M2","M3")])))
         
         results <- rbind(results, newrow)
         
