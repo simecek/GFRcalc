@@ -22,6 +22,9 @@ shinyServer(function(input, output) {
       }
       tmp <- tmp[,1:5] # only 5 columns matters
       names(tmp) <- c("Animal", "Time", "M1", "M2", "M3")
+      
+      animal.table <- read_excel(paste(inFile$datapath, ext, sep="."), sheet=3, col_names = FALSE)[2:4,-1]
+      attr(tmp, "animals") <- t(animal.table)
       tmp
     } else {
       NULL
@@ -39,6 +42,7 @@ shinyServer(function(input, output) {
       # are animals given? if not add them
       
       animals <- unique(dt$Animal)
+      animal.table <- attr(dt, "animals")
       results <- NULL
 
       for (a in animals) {
@@ -56,9 +60,14 @@ shinyServer(function(input, output) {
         fit1 <- oneexp(y=tmp2$mean,x=tmp2$Time)
         fit2 <- twoexp(y=tmp2$mean,x=tmp2$Time)
         
-        newrow <- data.frame(Animal = a, 
-                             GFR1 = tmp$mean[1]*ifelse(is.null(fit1), NA, coef(fit1)[2]/coef(fit1)[1]),
-                             GFR2 = tmp$mean[1]*ifelse(is.null(fit2), NA, coef(fit2)[2]*coef(fit2)[4]/(coef(fit2)[1]*coef(fit2)[4]+coef(fit2)[2]*coef(fit2)[3])),
+        inj.volume <- as.numeric(animal.table[animals==a,3])
+        
+        newrow <- data.frame(Animal = a,
+                             MouseId = animal.table[animals==a,1],
+                             Weight = as.numeric(animal.table[animals==a,2]),
+                             Injected_Volume = inj.volume,
+                             GFR1 = input$dilution*inj.volume*tmp$mean[1]*ifelse(is.null(fit1), NA, coef(fit1)[2]/coef(fit1)[1]),
+                             GFR2 = input$dilution*inj.volume*tmp$mean[1]*ifelse(is.null(fit2), NA, coef(fit2)[2]*coef(fit2)[4]/(coef(fit2)[1]*coef(fit2)[4]+coef(fit2)[2]*coef(fit2)[3])),
                              nNA = sum(is.na(tmp2[,c("M1","M2","M3")])))
         
         results <- rbind(results, newrow)
@@ -70,13 +79,14 @@ shinyServer(function(input, output) {
     } else {
       return (NULL)
     }
-  }, digits=4)
+  }, digits=1)
   
   output$plots <- renderUI({
     
     dt <- file.upload()
     
     if (!is.null(dt) & check.format(dt)=="") { # everything ok
+      
       plot_output_list <- lapply(1:length(unique(dt[,1])), function(i) {
         plotname <- paste0("plot", i)
         plotOutput(plotname, height = 300, width = 400)

@@ -11,6 +11,9 @@ check.format <- function(tb, col.names=c("M1","M2","M3","Time"), min.rows=6) {
   if (any(is.na(tb[,2]))) return("ERROR: Time must not contain missing values.")
   if (any(tb[,2]<0 | tb[,2]>200)) return("ERROR: Time must be an integer between 0 and 200.")
   if (nrow(tb) < min.rows) return(paste("Ar least",min.rows,"rows required."))
+  animal.table <- attr(tb, "animals") 
+  if (any(is.na(as.numeric(as.character(animal.table[,3]))))) return("Injected volume must be numeric.")
+  if (nrow(animal.table)!=length(unique(tb[,1]))) return("Number of animals differ between sheets 2 and 3.")
   return(invisible(""))
 }
 
