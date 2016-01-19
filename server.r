@@ -54,7 +54,7 @@ shinyServer(function(input, output) {
         tmp <- tmp[order(tmp$Time),]
         
         # very rough outlier detection
-        tmp[-1,c("M1","M2","M3")][outlier.detect(tmp[-1,], input$trhold)] <- NA
+        tmp[-1,c("M1","M2","M3")][outlier.detect(tmp[-1,], 5)] <- NA
         
         tmp$mean <- rowMeans(tmp[,c("M1","M2","M3")], na.rm=TRUE)
         start <- 2 # skip first observation
