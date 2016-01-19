@@ -1,6 +1,6 @@
-require(shiny)
-require(readxl)
-require(ggplot2)
+library(shiny)
+library(readxl)
+library(ggplot2)
 
 source("helpers.R")
 options(stringsAsFactors = FALSE)
@@ -11,21 +11,24 @@ shinyServer(function(input, output) {
   # read data file 
   file.upload <- reactive({
     inFile <- input$GFRfile
-    if (!is.null(inFile)) {
+    if (!is.null(inFile)) { # if any file name is given
       ext <- tools::file_ext(inFile$name)
       file.rename(inFile$datapath, paste(inFile$datapath, ext, sep=".")) # dirty hack, see issue 85
-      tmp <- read_excel(paste(inFile$datapath, ext, sep="."), sheet=2, col_names = FALSE)
-      tmp <- tmp[!is.na(tmp[,1]),] # remove NA rows
-      if (!is.character(tmp[,1])) { # if animal IDs missing, add them
-        animalID <- rep(LETTERS, each=length(unique(tmp[,1])))[1:nrow(tmp)]
-        tmp <- cbind(animalID, tmp)
-      }
-      tmp <- tmp[,1:5] # only 5 columns matters
-      names(tmp) <- c("Animal", "Time", "M1", "M2", "M3")
       
+      output <- read_excel(paste(inFile$datapath, ext, sep="."), sheet=2, col_names = FALSE)
+      output <- output[!is.na(output[,1]),] # remove NA rows
+      if (!is.character(output[,1])) { # if animal IDs missing, add them
+        animalID <- rep(LETTERS, each=length(unique(output[,1])))[1:nrow(output)]
+        output <- cbind(animalID, output)
+      }
+      output <- output[,1:5] # only 5 columns matters
+      names(output) <- c("Animal", "Time", "M1", "M2", "M3")
+      
+      # adding information about animals - should be on sheet 3
       animal.table <- read_excel(paste(inFile$datapath, ext, sep="."), sheet=3, col_names = FALSE)[2:4,-1]
-      attr(tmp, "animals") <- t(animal.table)
-      tmp
+      attr(output, "animals") <- t(animal.table)
+      print(attr(output, "animals"))
+      output
     } else {
       NULL
     }  
@@ -39,7 +42,7 @@ shinyServer(function(input, output) {
     
     if (!is.null(dt) & check.format(dt)=="") { # everything ok
     
-      # are animals given? if not add them
+      # info about animals given? if not add them
       
       animals <- unique(dt$Animal)
       animal.table <- attr(dt, "animals")

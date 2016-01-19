@@ -18,8 +18,6 @@ shinyUI(pageWithSidebar(
   
   mainPanel(
     textOutput("check"),
-   #  plotOutput("oneComp", width="800px", height="800px"),
-   # plotOutput("twoComp", width="800px", height="800px"),
     tableOutput('contents'),
     uiOutput("plots")
   )

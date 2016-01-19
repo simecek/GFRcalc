@@ -20,7 +20,8 @@ check.format <- function(tb, col.names=c("M1","M2","M3","Time"), min.rows=6) {
 # fit log-normal regression
 fit.rlm <- function(y,x) {
   require(MASS)
-  fit <- rlm(log(y)~x) 
+  print(x)
+  fit <- lm(log(y)~x) 
   fit
 }
 
