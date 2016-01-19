@@ -44,10 +44,18 @@ twoexp <- function(y,x) {
   a2 <- a1/10
   k2 <- k1/10
   
-  tryCatch(nls(y ~ A*exp(-B*x) + C*exp(-D*x),
+  output <- tryCatch(nls(y ~ A*exp(-B*x) + C*exp(-D*x),
                start=list(A=a1,B=k1,C=a2, D=k2),
                algorithm="port"),
            error = function(e) NULL)
+  
+  # if not converging, try diffetent optim. algorithm
+  if (is.null(output)) 
+        output <- tryCatch(nls(y ~ A*exp(-B*x) + C*exp(-D*x),
+              start=list(A=a1,B=k1,C=a2, D=k2)),
+              error = function(e) NULL)
+  
+  output
 }  
 
 make.plot <- function(dt, i) {
