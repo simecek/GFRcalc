@@ -20,7 +20,6 @@ check.format <- function(tb, col.names=c("M1","M2","M3","Time"), min.rows=6) {
 # fit log-normal regression
 fit.rlm <- function(y,x) {
   require(MASS)
-  print(x)
   fit <- lm(log(y)~x) 
   fit
 }
@@ -73,10 +72,12 @@ make.plot <- function(dt, i) {
   fit2 <- twoexp(y=tmp2$mean,x=tmp2$Time)
   
   if (!is.null(fit2)) {
+    print(dim(tmp2))
+    print(length(predict(fit2)))
     dt.plot <- data.frame(Time = rep(tmp2$Time,4),
                        Line = rep(c("F1","F2","F3","prediction"), each=nrow(tmp2)),
                        Fluorescence = c(tmp2$M1, tmp2$M2, tmp2$M3,
-                                        predict(fit2)))
+                                        predict(fit2, data.frame(x=tmp2$Time))))
   } else {
     medianM = median(c(tmp2$M1, tmp2$M2, tmp2$M3))
     dt.plot <- data.frame(Time = rep(tmp2$Time,4),
