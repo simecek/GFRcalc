@@ -57,6 +57,25 @@ twoexp <- function(y,x) {
   output
 }  
 
+# integral of linear approximation from 0 to \int
+linint <- function(y,x) {
+
+  # enforse increasing ordering
+  stopifnot(!any(duplicated(x)))
+  stopifnot(length(x)==length(y))
+  o <- order(x)
+  x <- x[o]
+  y <- y[o]
+  
+  # add 0 and \infty
+  n <- length(x)
+  x <- c(0,x,x[n]+(x[n]-x[n-1])/(y[n-1]-y[n])*y[n])
+  y <- c(y[1]+(y[1]-y[2])*x[1]/(x[2]-x[1]),y,0)
+  
+  # integration
+  sum(diff(x)*(y[-1]+y[-n])/2)
+}
+
 make.plot <- function(dt, i) {
   animals <- unique(dt$Animal)
   a <- animals[i]
@@ -72,8 +91,6 @@ make.plot <- function(dt, i) {
   fit2 <- twoexp(y=tmp2$mean,x=tmp2$Time)
   
   if (!is.null(fit2)) {
-    print(dim(tmp2))
-    print(length(predict(fit2)))
     dt.plot <- data.frame(Time = rep(tmp2$Time,4),
                        Line = rep(c("F1","F2","F3","prediction"), each=nrow(tmp2)),
                        Fluorescence = c(tmp2$M1, tmp2$M2, tmp2$M3,

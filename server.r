@@ -27,7 +27,6 @@ shinyServer(function(input, output) {
       # adding information about animals - should be on sheet 3
       animal.table <- read_excel(paste(inFile$datapath, ext, sep="."), sheet=3, col_names = FALSE)[2:4,-1]
       attr(output, "animals") <- t(animal.table)
-      print(attr(output, "animals"))
       output
     } else {
       NULL
@@ -62,6 +61,7 @@ shinyServer(function(input, output) {
 
         fit1 <- oneexp(y=tmp2$mean,x=tmp2$Time)
         fit2 <- twoexp(y=tmp2$mean,x=tmp2$Time)
+        fit3 <- linint(y=tmp2$mean,x=tmp2$Time)
         
         inj.volume <- as.numeric(animal.table[animals==a,3])
         
@@ -71,6 +71,7 @@ shinyServer(function(input, output) {
                              Injected_Volume = inj.volume,
                              GFR1 = input$dilution*inj.volume*tmp$mean[1]*ifelse(is.null(fit1), NA, coef(fit1)[2]/coef(fit1)[1]),
                              GFR2 = input$dilution*inj.volume*tmp$mean[1]*ifelse(is.null(fit2), NA, coef(fit2)[2]*coef(fit2)[4]/(coef(fit2)[1]*coef(fit2)[4]+coef(fit2)[2]*coef(fit2)[3])),
+                             GFR3 = input$dilution*inj.volume*tmp$mean[1]/fit3,
                              nNA = sum(is.na(tmp2[,c("M1","M2","M3")])))
         
         results <- rbind(results, newrow)

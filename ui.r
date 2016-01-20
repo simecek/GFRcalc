@@ -14,7 +14,7 @@ shinyUI(pageWithSidebar(
               'Animal' (optional), 'Time', 'F1',
               'F2' and 'F3' (other columns will be ignored)."),
     br(),
-    div("GFRcalc 0.9.1, powered by R/Shiny, developed by Petr Simecek, source code on ",
+    div("GFRcalc 0.9.2, powered by R/Shiny, developed by Petr Simecek, source code on ",
         a("Github", href="https://github.com/simecek/GFRcalc"))
     
   ),
