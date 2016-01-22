@@ -62,6 +62,8 @@ shinyServer(function(input, output) {
         fit1 <- oneexp(y=tmp2$mean,x=tmp2$Time)
         fit2 <- twoexp(y=tmp2$mean,x=tmp2$Time)
         fit3 <- linint(y=tmp2$mean,x=tmp2$Time)
+        fit4 <- twoexp.approx(y=tmp2$mean,x=tmp2$Time)
+        print(fit4)
         
         inj.volume <- as.numeric(animal.table[animals==a,3])
         
@@ -72,6 +74,7 @@ shinyServer(function(input, output) {
                              GFR1 = input$dilution*inj.volume*tmp$mean[1]*ifelse(is.null(fit1), NA, coef(fit1)[2]/coef(fit1)[1]),
                              GFR2 = input$dilution*inj.volume*tmp$mean[1]*ifelse(is.null(fit2), NA, coef(fit2)[2]*coef(fit2)[4]/(coef(fit2)[1]*coef(fit2)[4]+coef(fit2)[2]*coef(fit2)[3])),
                              GFR3 = input$dilution*inj.volume*tmp$mean[1]/fit3,
+                             GFR4 = input$dilution*inj.volume*tmp$mean[1]/fit4,
                              nNA = sum(is.na(tmp2[,c("M1","M2","M3")])))
         
         results <- rbind(results, newrow)

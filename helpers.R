@@ -35,27 +35,65 @@ oneexp <- function(y,x) {
 
 # fit two components model y = A*exp(-B*x) + C*exp(-D*x) + noise
 twoexp <- function(y,x) {
-  f1 <- oneexp(y,x)
+  
+  stopifnot(length(x) ==length(y))
+  o <- order(x)
+  x <- x[o]
+  y <- y[o]
+  n <- length(x)
+  
+  f1 <- oneexp(y[1:4],x[1:4])
   if (is.null(f1)) return(NULL)
+  
+  f2 <- oneexp(y[(n-3):n],x[(n-3):n])
+  if (is.null(f2)) return(NULL)
   
   a1 <- coef(f1)[1]
   k1 <- coef(f1)[2]
-  a2 <- a1/10
-  k2 <- k1/10
+  a2 <- coef(f2)[1]
+  k2 <- coef(f2)[2]
   
   output <- tryCatch(nls(y ~ A*exp(-B*x) + C*exp(-D*x),
-               start=list(A=a1,B=k1,C=a2, D=k2),
-               algorithm="port"),
-           error = function(e) NULL)
+                         start=list(A=a1,B=k1,C=a2, D=k2),
+                         algorithm="port"),
+                     error = function(e) NULL)
   
   # if not converging, try diffetent optim. algorithm
   if (is.null(output)) 
-        output <- tryCatch(nls(y ~ A*exp(-B*x) + C*exp(-D*x),
-              start=list(A=a1,B=k1,C=a2, D=k2)),
-              error = function(e) NULL)
+    output <- tryCatch(nls(y ~ A*exp(-B*x) + C*exp(-D*x),
+                           start=list(A=a1,B=k1,C=a2, D=k2)),
+                       error = function(e) NULL)
   
   output
 }  
+
+# two components approximated by two one component models
+twoexp.approx <- function(y,x) {
+  
+  stopifnot(length(x) ==length(y))
+  o <- order(x)
+  x <- x[o]
+  y <- y[o]
+  n <- length(x)
+  
+  f1 <- oneexp(y[1:4],x[1:4])
+  if (is.null(f1)) return(NULL)
+  
+  f2 <- oneexp(y[(n-3):n],x[(n-3):n])
+  if (is.null(f2)) return(NULL)
+  
+  # coefficients
+  a1 <- coef(f1)[1]
+  k1 <- coef(f1)[2]
+  a2 <- coef(f2)[1]
+  k2 <- coef(f2)[2]
+  
+  # intersect
+  x0 <- (log(a2) - log(a1))/(k2-k1)
+
+  a1/k1 * (1 - exp(-k1*x0)) + a2/k2 * exp(-k2*x0)  
+}  
+  
 
 # integral of linear approximation from 0 to \int
 linint <- function(y,x) {
