@@ -63,30 +63,44 @@ shinyServer(function(input, output) {
         fit2 <- twoexp(y=tmp2$mean,x=tmp2$Time)
         fit3 <- linint(y=tmp2$mean,x=tmp2$Time)
         fit4 <- twoexp.approx(y=tmp2$mean,x=tmp2$Time)
-        print(fit4)
         
         inj.volume <- as.numeric(animal.table[animals==a,3])
         
         newrow <- data.frame(Animal = a,
                              MouseId = animal.table[animals==a,1],
                              Weight = as.numeric(animal.table[animals==a,2]),
-                             Injected_Volume = inj.volume,
-                             GFR1 = input$dilution*inj.volume*tmp$mean[1]*ifelse(is.null(fit1), NA, coef(fit1)[2]/coef(fit1)[1]),
-                             GFR2 = input$dilution*inj.volume*tmp$mean[1]*ifelse(is.null(fit2), NA, coef(fit2)[2]*coef(fit2)[4]/(coef(fit2)[1]*coef(fit2)[4]+coef(fit2)[2]*coef(fit2)[3])),
-                             GFR3 = input$dilution*inj.volume*tmp$mean[1]/fit3,
-                             GFR4 = input$dilution*inj.volume*tmp$mean[1]/fit4,
-                             nNA = sum(is.na(tmp2[,c("M1","M2","M3")])))
+                             "Injected Volume" = inj.volume,
+                             
+                             "C2" = input$dilution*inj.volume*tmp$mean[1]*ifelse(is.null(fit2), NA, coef(fit2)[2]*coef(fit2)[4]/(coef(fit2)[1]*coef(fit2)[4]+coef(fit2)[2]*coef(fit2)[3])),
+                             "2xC1" = input$dilution*inj.volume*tmp$mean[1]/fit4,
+                             "C1" = input$dilution*inj.volume*tmp$mean[1]*ifelse(is.null(fit1), NA, coef(fit1)[2]/coef(fit1)[1]),
+                             "PL" = input$dilution*inj.volume*tmp$mean[1]/fit3,
+                             
+                             nNA = sum(is.na(tmp2[,c("M1","M2","M3")])),
+                             check.names = FALSE)
         
         results <- rbind(results, newrow)
         
       }
+      
+      if (!input$Animal) results$"Animal" <- NULL
+      if (!input$MouseId) results$"MouseId" <- NULL
+      if (!input$Weight) results$"Weight" <- NULL
+      if (!input$InjectedVolume) results$"Injected Volume" <- NULL
+      if (!input$GFR2) results$"C2" <- NULL
+      if (!input$GFR4) results$"2xC1" <- NULL
+      if (!input$GFR1) results$"C1" <- NULL
+      if (!input$GFR3) results$"PL" <- NULL
+      if (!input$nNA) results$"nNA" <- NULL
+      
+      rownames(results) <- NULL
     
       return(results)
       
     } else {
       return (NULL)
     }
-  }, digits=1)
+  }, digits=1, include.rownames=FALSE)
   
   output$plots <- renderUI({
     
@@ -96,7 +110,7 @@ shinyServer(function(input, output) {
       
       plot_output_list <- lapply(1:length(unique(dt[,1])), function(i) {
         plotname <- paste0("plot", i)
-        plotOutput(plotname, height = 300, width = 400)
+        plotOutput(plotname, height = 390, width = 520)
       })
       
       # Convert the list to a tagList - this is necessary for the list of items
