@@ -75,6 +75,7 @@ shinyServer(function(input, output) {
                              "2xC1" = input$dilution*inj.volume*tmp$mean[1]/fit4,
                              "C1" = input$dilution*inj.volume*tmp$mean[1]*ifelse(is.null(fit1), NA, coef(fit1)[2]/coef(fit1)[1]),
                              "PL" = input$dilution*inj.volume*tmp$mean[1]/fit3,
+                             "sigma" = summary(fit2)$sigma, 
                              
                              nNA = sum(is.na(tmp2[,c("M1","M2","M3")])),
                              check.names = FALSE)
