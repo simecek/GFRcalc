@@ -25,7 +25,7 @@ shinyUI(pageWithSidebar(
   #  sliderInput("trhold","Outlier threshold:", min=1, max=10, value=5),
     
     br(),
-    div("GFRcalc 0.9.4, powered by R/Shiny, developed by Petr Simecek, source code on ",
+    div("GFRcalc 0.9.5, powered by R/Shiny, developed by Petr Simecek, source code on ",
         a("Github", href="https://github.com/simecek/GFRcalc"))
     
   ),
