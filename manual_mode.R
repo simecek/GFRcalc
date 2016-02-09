@@ -61,9 +61,9 @@ for (f in files) {
                          "Injected Volume" = inj.volume,
                          
                          "C2" = dilution*inj.volume*tmp$mean[1]*ifelse(is.null(fit2), NA, coef(fit2)[2]*coef(fit2)[4]/(coef(fit2)[1]*coef(fit2)[4]+coef(fit2)[2]*coef(fit2)[3])),
-                         "2xC1" = dilution*inj.volume*tmp$mean[1]/fit4,
+                         "2xC1" = ifelse(is.null(fit4),NA,dilution*inj.volume*tmp$mean[1]/fit4),
                          "C1" = dilution*inj.volume*tmp$mean[1]*ifelse(is.null(fit1), NA, coef(fit1)[2]/coef(fit1)[1]),
-                         "PL" = dilution*inj.volume*tmp$mean[1]/fit3,
+                         "PL" = ifelse(is.null(fit3), NA, dilution*inj.volume*tmp$mean[1]/fit3),
                          
                          nNA = sum(is.na(tmp2[,c("M1","M2","M3")])),
                          check.names = FALSE)
