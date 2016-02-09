@@ -20,6 +20,7 @@ shinyUI(pageWithSidebar(
     checkboxInput("GFR4", "2 One-compartment models (2xC1)", value=TRUE),
     checkboxInput("GFR1", "One-compartment model (1C)", value=TRUE),
     checkboxInput("GFR3", "Piecewise linear model (PL)", value=TRUE),
+    checkboxInput("Sigma.C2", "Square root of the error variance (Sigma.C2)", value=TRUE),
     checkboxInput("nNA", "Number of missing observations (nNA)", value=TRUE),
   #  sliderInput("trhold","Outlier threshold:", min=1, max=10, value=5),
     
