@@ -1,6 +1,5 @@
 
-
-## Set input parameters
+## Set the input parameters
 # folder with input XLSX files
 input.folder <- "H:/SmallProjects/1507 GFR examples/new"
 output.file <- "gfr_estimates.csv"
@@ -105,7 +104,7 @@ for (f in files) {
     
     results <- rbind(results, newrow)
 
-    # plotting data
+    # data for qplot
     if (!is.null(fit2)) {
       dt.plot <- data.frame(Time = rep(tmp2$Time,4),
                             Line = rep(c("F1","F2","F3","prediction"), each=nrow(tmp2)),
@@ -119,7 +118,8 @@ for (f in files) {
                                              rep(medianM, nrow(tmp2))))
     }
     
-    plot(qplot(y=Fluorescence, x=Time, data=dt.plot) +
+    if (!is.null(output.pdf))
+      plot(qplot(y=Fluorescence, x=Time, data=dt.plot) +
            geom_line(aes(group=Line, color=Line)) +
            ggtitle(paste(f,a)) +  
            theme_bw())
@@ -132,5 +132,6 @@ for (f in files) {
   summary.table <- rbind(summary.table, results)
 }
 
+# save output
 write.csv(summary.table, output.file, row.names=FALSE)
 if (!is.null(output.pdf)) dev.off()
