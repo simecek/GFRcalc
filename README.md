@@ -4,12 +4,12 @@ R/Shiny app to estimate Glomerular Filtration Rate with two-compartment model
 
 ### How-To
 
-To access R/Shiny app go to 
+To access R/Shiny app, go to 
 
 [http://churchilldev.jax.org:49194/GFRcalc/](http://churchilldev.jax.org:49194/GFRcalc/)
 (JAX network only)
 
-To use the batch processing, collect all XLSX files into one folder and use `helpers.R` script (after modifying the first four lines)
+To use the batch processing, collect all XLSX files into one folder and use `manual_mode.R` script (after modifying the first four lines)
 
 ### Files
 
