@@ -1,11 +1,12 @@
 
 ## Set the input parameters
 # folder with input XLSX files
-input.folder <- "H:/SmallProjects/1507 GFR examples/new"
+input.folder <- "C:/Temp/demo"
 output.file <- "gfr_estimates.csv"
 output.pdf  <- "gfr_plots.pdf" # if NULL then no plots
 dilution <- 100 # (default=100)
 verbose <- TRUE # if TRUE then print debugging messages 
+outlier.threshold <- 5 # if =Inf then no outlier removed 
 
 library(readxl)
 library(ggplot2)
@@ -62,7 +63,7 @@ for (f in files) {
     tmp <- tmp[order(tmp$Time),]
     
     # very rough outlier detection
-    tmp[-1,c("M1","M2","M3")][outlier.detect(tmp[-1,], 5)] <- NA
+    tmp[-1,c("M1","M2","M3")][outlier.detect(tmp[-1,], outlier.threshold)] <- NA
     
     tmp$mean <- rowMeans(tmp[,c("M1","M2","M3")], na.rm=TRUE)
     start <- 2 # skip first observation
@@ -71,14 +72,14 @@ for (f in files) {
     # extra check for number of non-missing observations
     if (sum(!is.na(tmp2$mean))<5) {
       warning(paste("Skipped animal",a,"from",f,"because nb. of observations < 5"))
-      if (verbose) cat("    not nough observations")
+      if (verbose) cat("    not nough observations", "\n")
       next
     } 
     
     # extra check for duplicated times
     if (any(duplicated(tmp2$Time))) {
       warning(paste("Skipped animal",a,"from",f,"because of duplicated 'Time'"))
-      if (verbose) cat("    duplicated time")
+      if (verbose) cat("    duplicated time", "\n")
       next
     }
     
@@ -117,6 +118,10 @@ for (f in files) {
                             Fluorescence = c(tmp2$M1, tmp2$M2, tmp2$M3,
                                              rep(medianM, nrow(tmp2))))
     }
+    
+    
+    # remove missing points
+    dt.plot <- subset(dt.plot, !is.na(Fluorescence))
     
     if (!is.null(output.pdf))
       plot(qplot(y=Fluorescence, x=Time, data=dt.plot) +
