@@ -20,3 +20,7 @@ To use the batch processing, collect all XLSX files into one folder and use `man
 ### Reference
 
 Hall, J. E., Guyton, A. C., & Farr, B. M. (1977). A single-injection method for measuring glomerular filtration rate. American Journal of Physiology-Renal Physiology, 232(1), F72-F76.
+
+### Acknowldgements and license
+
+GFRCalc was developed by [Petr Simecek](https://github.com/simecek) with a help of Susan Sheehan and [Yuka Takemon](https://github.com/ytakemon) for [Korstanje Lab](https://github.com/TheJacksonLaboratory/KorstanjeLab_Publications). It can be freely shared and distributed under [MIT license]('LICENSE').
