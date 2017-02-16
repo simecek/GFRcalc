@@ -23,4 +23,4 @@ Hall, J. E., Guyton, A. C., & Farr, B. M. (1977). A single-injection method for 
 
 ### Acknowldgements and license
 
-GFRCalc was developed by [Petr Simecek](https://github.com/simecek) with a help of Susan Sheehan and [Yuka Takemon](https://github.com/ytakemon) for [Korstanje Lab](https://github.com/TheJacksonLaboratory/KorstanjeLab_Publications). It can be freely shared and distributed under [MIT license](LICENSE).
+GFRCalc was developed by [Petr Simecek](https://github.com/simecek) with a help of [Susan Sheehan](https://github.com/susan-sheehan) and [Yuka Takemon](https://github.com/ytakemon) for [Korstanje Lab](https://github.com/TheJacksonLaboratory/KorstanjeLab_Publications). It can be freely shared and distributed under [MIT license](LICENSE).
