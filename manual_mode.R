@@ -1,7 +1,7 @@
 
 ## Set the input parameters
 # folder with input XLSX files
-input.folder <- "/Users/ytakemon/Desktop/GFR/A1CFGFRDataFiles"
+input.folder <- "C:/Temp/demo"
 output.file <- "gfr_estimates.csv"
 output.pdf  <- "gfr_plots.pdf" # if NULL then no plots
 dilution <- 100 # (default=100)
@@ -10,7 +10,7 @@ outlier.threshold <- 5 # if =Inf then no outlier removed
 
 library(readxl)
 library(ggplot2)
-source("/Users/ytakemon/GitHub/GFRcalc/helpers.R")
+source("helpers.R")
 
 # create PDF file
 if (!is.null(output.pdf)) pdf(file=output.pdf)
